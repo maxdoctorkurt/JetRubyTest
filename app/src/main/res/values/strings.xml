@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">JetRubyTest</string>
+    <string name="all_channels">All</string>
+    <string name="fav_channels">Favorites</string>
+</resources>
