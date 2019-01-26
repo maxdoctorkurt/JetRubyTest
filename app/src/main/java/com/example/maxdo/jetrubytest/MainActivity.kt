@@ -11,11 +11,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         viewPager.adapter = CustomPagerAdapter(supportFragmentManager)
         tabs.setupWithViewPager(viewPager)
         tabs.getTabAt(0)?.setText(R.string.all_channels)
         tabs.getTabAt(1)?.setText(R.string.fav_channels)
+        tabs.getTabAt(2)?.setText(R.string.search_news)
 
     }
 }

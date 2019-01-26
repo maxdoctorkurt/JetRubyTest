@@ -18,6 +18,7 @@ object Repository {
     }
 
     fun sources(): Single<SourcesResponse> {
+        // TODO caching
         return api?.sources() ?: Single.just(SourcesResponse(null, null))
     }
 }

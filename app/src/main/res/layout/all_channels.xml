@@ -2,13 +2,20 @@
 <LinearLayout
 
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:background="@color/blue_300"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/allNews" android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout android:layout_width="match_parent"
+                                                           android:layout_height="wrap_content"
+                                                           android:id="@+id/swipeRefresh">
+
+        <androidx.recyclerview.widget.RecyclerView
+
+                android:id="@+id/allChannels" android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
 </LinearLayout>

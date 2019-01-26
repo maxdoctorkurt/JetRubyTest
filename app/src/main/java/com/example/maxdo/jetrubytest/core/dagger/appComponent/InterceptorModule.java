@@ -20,9 +20,9 @@ public class InterceptorModule {
             @Override
             public Response intercept(@NonNull Chain chain) throws IOException {
                 okhttp3.Request request = chain.request();
-                Headers headers = request.headers().newBuilder().add("Authorization", BuildConfig.NewsApiKey).build();
+                Headers headers = request.headers().newBuilder().add("X-Api-Key", BuildConfig.NewsApiKey).build();
                 request = request.newBuilder().headers(headers).build();
-                return chain.proceed(chain.request());
+                return chain.proceed(request);
             }
         };
     }

@@ -8,12 +8,12 @@ import retrofit2.http.Query
 
 interface Api {
 
-    @GET("/everything")
+    @GET("everything/")
     fun everything(@Query("q") query: String, @Query("pageSize") pageSize: Int): Single<EverythingResponse>
 
-    @GET("/top-headlines")
+    @GET("top-headlines/")
     fun topHeadlines(@Query("q") query: String, @Query("pageSize") pageSize: Int) : Single<EverythingResponse>
 
-    @GET("/sources")
+    @GET("sources/")
     fun sources() : Single<SourcesResponse>
 }
