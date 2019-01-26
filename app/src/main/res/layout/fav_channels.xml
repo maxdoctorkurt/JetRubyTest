@@ -1,13 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:background="@color/red_300"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/favNews" android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+
+    <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
+
+        <FrameLayout
+                android:id="@+id/favNoElemPlaceholder"
+                android:layout_width="match_parent" android:layout_height="match_parent">
+            <include layout="@layout/no_elements"/>
+
+        </FrameLayout>
+
+        <FrameLayout
+                android:id="@+id/favNoWifiPlaceholder"
+                android:layout_width="match_parent" android:layout_height="match_parent">
+            <include layout="@layout/no_wifi"/>
+        </FrameLayout>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+
+                android:id="@+id/favChannelsSwipe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/favChannels" android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </FrameLayout>
+
+
 
 </LinearLayout>

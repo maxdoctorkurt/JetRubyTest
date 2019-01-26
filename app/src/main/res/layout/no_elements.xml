@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:weightSum="1"
+              android:gravity="center"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <LinearLayout android:weightSum="1" android:orientation="vertical" android:layout_width="0dp" android:layout_weight="0.5" android:layout_height="match_parent">
+
+        <ImageView
+                android:layout_weight="0.8"
+                android:src="@drawable/empty_flask" android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:contentDescription="@null"/>
+
+        <TextView android:textColor="@color/iconsOutline" android:textAppearance="@style/TextAppearance.AppCompat.Medium" android:gravity="center" android:text="@string/no_items" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+
+
+</LinearLayout>

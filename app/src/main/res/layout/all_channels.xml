@@ -6,16 +6,35 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout android:layout_width="match_parent"
-                                                           android:layout_height="wrap_content"
-                                                           android:id="@+id/swipeRefresh">
 
-        <androidx.recyclerview.widget.RecyclerView
+    <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
 
-                android:id="@+id/allChannels" android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        <FrameLayout
+                android:id="@+id/noElemPlaceholder"
+                android:layout_width="match_parent" android:layout_height="match_parent">
+            <include layout="@layout/no_elements"/>
+
+        </FrameLayout>
+
+        <FrameLayout
+                android:id="@+id/noWifiPlaceholder"
+                android:layout_width="match_parent" android:layout_height="match_parent">
+
+            <include layout="@layout/no_wifi"/>
+        </FrameLayout>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout android:layout_width="match_parent"
+                                                               android:layout_height="wrap_content"
+                                                               android:id="@+id/allChannelsSwipeRefresh">
+
+            <androidx.recyclerview.widget.RecyclerView
+
+                    android:id="@+id/allChannels" android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </FrameLayout>
 
 
 </LinearLayout>

@@ -12,7 +12,7 @@ class AllChannelsPresenter : MviBasePresenter<AllChannelsView, AllChannelsViewSt
 
     override fun bindIntents() {
 
-        val initialState: AllChannelsViewState = AllChannelsViewState()
+        val initialState = AllChannelsViewState()
 
         val partialPull: Observable<PartialVS> = intent(AllChannelsView::getPullToRefreshIntent)
             .observeOn(Schedulers.io())
@@ -27,7 +27,7 @@ class AllChannelsPresenter : MviBasePresenter<AllChannelsView, AllChannelsViewSt
                 }
                 return@flatMap Observable.just(PartialVS.PullToRefresh(listOf(), false, "Error!"))
             }
-            .startWith ( PartialVS.Loading(true) )
+            .startWith(PartialVS.Loading(true))
 
         val partialFirstShow: Observable<PartialVS> = Repository.sources().toObservable().cache()
             .flatMap {
@@ -44,10 +44,44 @@ class AllChannelsPresenter : MviBasePresenter<AllChannelsView, AllChannelsViewSt
                 )
             }
 
+        val partialItemClick: Observable<PartialVS> = intent(AllChannelsView::getClickOnChannelIntent)
+            .observeOn(Schedulers.io())
+            .debounce(300, TimeUnit.MILLISECONDS)
+            .map { PartialVS.ChannelSelection(it) }
+
+        val partialDialogDismiss: Observable<PartialVS> = intent(AllChannelsView::getDismissFavChannelDialogIntent)
+            .observeOn(Schedulers.io())
+            .debounce(300, TimeUnit.MILLISECONDS)
+            .map { PartialVS.FavoriteDialogDismiss() }
+
+        val partialDialogSubmit: Observable<PartialVS> = intent(AllChannelsView::getSubmitAddingToFavChannelsDialogIntent)
+            .observeOn(Schedulers.io())
+            .debounce(300, TimeUnit.MILLISECONDS)
+            .flatMap {
+                return@flatMap Repository.addSourceToFav(it).toObservable()
+            }
+            .map {
+                return@map PartialVS.FavoriteDialogSubmit()
+            }
+
+        val partialDoneShowedOnce: Observable<PartialVS> = intent(AllChannelsView::getNotifyDoneMessageShowedOnceIntent)
+            .observeOn(Schedulers.io())
+            .debounce(300, TimeUnit.MILLISECONDS)
+            .map {
+                return@map PartialVS.DoneMessageShowedOnce()
+            }
+
+
         val observable: Observable<AllChannelsViewState> =
-            partialPull.mergeWith(partialFirstShow).scan(initialState, this::stateReducer).startWith(
-                AllChannelsViewState(listOf(), true, null)
-            ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+            partialPull
+                .mergeWith(partialFirstShow)
+                .mergeWith(partialItemClick)
+                .mergeWith(partialDialogDismiss)
+                .mergeWith(partialDialogSubmit)
+                .mergeWith(partialDoneShowedOnce)
+                .scan(initialState, this::stateReducer).startWith(
+                    AllChannelsViewState(listOf(), true, null, null)
+                ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 
         subscribeViewState(observable, AllChannelsView::render)
 
@@ -71,17 +105,38 @@ class AllChannelsPresenter : MviBasePresenter<AllChannelsView, AllChannelsViewSt
         }
 
         if (partialState is PartialVS.EmptySourcesList) {
-            return AllChannelsViewState(listOf(), false, null)
+            return AllChannelsViewState(listOf(), false, null, null)
+        }
+
+        if (partialState is PartialVS.ChannelSelection) {
+            return initialState.builder().withAddFavouriteDialog(partialState.channel).build()
+        }
+
+        if (partialState is PartialVS.FavoriteDialogDismiss) {
+            return initialState.builder().withAddFavouriteDialog(null).build()
+        }
+
+        if (partialState is PartialVS.FavoriteDialogSubmit) {
+            return initialState.builder().withAddFavouriteDialog(null).withSuccessAddingToFavoritesMessage("Done")
+                .build()
+        }
+
+        if (partialState is PartialVS.DoneMessageShowedOnce) {
+            return initialState.builder().withAddFavouriteDialog(null).withSuccessAddingToFavoritesMessage(null)
+                .build()
         }
 
         throw IllegalStateException("Unknown Partial!")
     }
 
     sealed class PartialVS {
-        class Loading(val progress: Boolean): PartialVS()
+        class Loading(val progress: Boolean) : PartialVS()
         class PullToRefresh(val channels: List<Source>, val progress: Boolean, val error: String?) : PartialVS()
         class FirstShow(val channels: List<Source>, val progress: Boolean, val error: String?) : PartialVS()
         class EmptySourcesList() : PartialVS()
-        class FavoriteDialog(isDismissed: Boolean) : PartialVS()
+        class FavoriteDialogDismiss() : PartialVS()
+        class FavoriteDialogSubmit() : PartialVS()
+        class ChannelSelection(val channel: Source) : PartialVS()
+        class DoneMessageShowedOnce() : PartialVS()
     }
 }

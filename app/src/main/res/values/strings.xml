@@ -3,4 +3,10 @@
     <string name="all_channels">All</string>
     <string name="fav_channels">Favorites</string>
     <string name="search_news">Search</string>
+    <string name="no_items">No items</string>
+    <string name="no_network">No network</string>
+    <string name="adding_to_fav_dialog_title">Favorites</string>
+    <string name="adding_to_fav_dialog_message">Add this channel to favorites?</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
 </resources>
