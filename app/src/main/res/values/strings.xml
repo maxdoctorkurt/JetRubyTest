@@ -9,4 +9,6 @@
     <string name="adding_to_fav_dialog_message">Add this channel to favorites?</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="removing_from_fav_dialog_title">Favorites</string>
+    <string name="removing_from_fav_dialog_message">Remove this channel from favorites?</string>
 </resources>

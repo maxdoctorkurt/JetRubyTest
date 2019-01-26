@@ -38,10 +38,51 @@ class FavChannelsPresenter : MviBasePresenter<FavChannelsView, FavChannelsViewSt
                 )
             }
 
+        val partialItemClick: Observable<PartialVS> = intent(FavChannelsView::getClickOnFavChannelIntent)
+            .observeOn(Schedulers.io())
+            .debounce(300, TimeUnit.MILLISECONDS)
+            .map { PartialVS.ChannelSelection(it) }
+
+        val partialDialogDismiss: Observable<PartialVS> =
+            intent(FavChannelsView::getDismissFavChannelRemovingDialogIntent)
+                .observeOn(Schedulers.io())
+                .debounce(300, TimeUnit.MILLISECONDS)
+                .map { PartialVS.FavoriteRemoveDialogDismiss() }
+
+        val partialDialogSubmit: Observable<PartialVS> =
+            intent(FavChannelsView::getSubmitRemovingFromFavChannelsDialogIntent)
+                .observeOn(Schedulers.io())
+                .debounce(300, TimeUnit.MILLISECONDS)
+                .flatMap {
+                    return@flatMap Repository.removeSourceFromFav(it).toObservable()
+                }
+                .flatMap {
+                    // update after deleting
+                    return@flatMap Repository.getFavSources().toObservable()
+                }
+                .map {
+                    return@map PartialVS.FavoriteRemoveDialogSubmit(it)
+                }
+
+        val partialDoneShowedOnce: Observable<PartialVS> = intent(FavChannelsView::getNotifyDoneMessageShowedOnceIntent)
+            .observeOn(Schedulers.io())
+            .debounce(300, TimeUnit.MILLISECONDS)
+            .map {
+                return@map PartialVS.DoneMessageShowedOnce()
+            }
+
         val observable: Observable<FavChannelsViewState> =
-            partialPullToRefresh.mergeWith(partialFirstShow).scan(initialState, this::stateReducer).startWith(
-                FavChannelsViewState(listOf(), true, null)
-            ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+            partialPullToRefresh
+                .mergeWith(partialFirstShow)
+                .mergeWith(partialItemClick)
+                .mergeWith(partialDialogDismiss)
+                .mergeWith(partialDialogSubmit)
+                .mergeWith(partialDoneShowedOnce)
+                .scan(initialState, this::stateReducer)
+                .startWith(
+                    FavChannelsViewState(listOf(), true, null)
+                ).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
 
         subscribeViewState(observable, FavChannelsView::render)
     }
@@ -67,6 +108,25 @@ class FavChannelsPresenter : MviBasePresenter<FavChannelsView, FavChannelsViewSt
             return FavChannelsViewState(listOf(), false, null)
         }
 
+        if (partialState is PartialVS.ChannelSelection) {
+            return initialState.builder().withFavoriteRemoveDialog(partialState.channel).build()
+        }
+
+        if (partialState is PartialVS.FavoriteRemoveDialogDismiss) {
+            return initialState.builder().withFavoriteRemoveDialog(null).build()
+        }
+
+        if (partialState is PartialVS.FavoriteRemoveDialogSubmit) {
+            return initialState.builder().withFavoriteRemoveDialog(null).withSuccessAddingToFavoritesMessage("Done")
+                .withChannels(partialState.updatedList)
+                .build()
+        }
+
+        if (partialState is PartialVS.DoneMessageShowedOnce) {
+            return initialState.builder().withFavoriteRemoveDialog(null).withSuccessAddingToFavoritesMessage(null)
+                .build()
+        }
+
         throw IllegalStateException("Unknown Partial!")
     }
 
@@ -75,7 +135,10 @@ class FavChannelsPresenter : MviBasePresenter<FavChannelsView, FavChannelsViewSt
         class PullToRefresh(val channels: List<Source>, val progress: Boolean, val error: String?) : PartialVS()
         class FirstShow(val channels: List<Source>, val progress: Boolean, val error: String?) : PartialVS()
         class EmptySourcesList() : PartialVS()
-        class FavoriteRemoveDialog(isDismissed: Boolean) : PartialVS()
+        class FavoriteRemoveDialogDismiss() : PartialVS()
+        class FavoriteRemoveDialogSubmit(val updatedList: List<Source>) : PartialVS()
+        class ChannelSelection(val channel: Source) : PartialVS()
+        class DoneMessageShowedOnce() : PartialVS()
     }
 
 

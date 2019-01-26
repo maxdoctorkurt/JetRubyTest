@@ -32,12 +32,8 @@ class AllChannelsViewState(
         fun withProgress(progress: Boolean) = apply { this.progress = progress }
         fun withAddFavouriteDialog(sourceRelatedToDialog: Source?) =
             apply { this.sourceRelatedToDialog = sourceRelatedToDialog }
-
         fun withSuccessAddingToFavoritesMessage(successAddingToFavoritesMessage: String?) =
             apply { this.successAddingToFavoritesMessage = successAddingToFavoritesMessage }
-
-        fun withSuccessAddingToFavoritesMessageShowed(successAddingToFavoritesMessageShowedOnce: Boolean) =
-            apply { this.successAddingToFavoritesMessageShowedOnce = successAddingToFavoritesMessageShowedOnce }
 
         fun withError(error: String?) = apply { this.error = error }
         fun build() = AllChannelsViewState(

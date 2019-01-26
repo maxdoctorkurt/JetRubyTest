@@ -79,8 +79,13 @@ class AllChannelsPresenter : MviBasePresenter<AllChannelsView, AllChannelsViewSt
                 .mergeWith(partialDialogDismiss)
                 .mergeWith(partialDialogSubmit)
                 .mergeWith(partialDoneShowedOnce)
-                .scan(initialState, this::stateReducer).startWith(
-                    AllChannelsViewState(listOf(), true, null, null)
+                .scan(initialState, this::stateReducer)
+                .startWith(
+                    AllChannelsViewState(
+                        listOf(),
+                        true,
+                        null,
+                        null)
                 ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 
         subscribeViewState(observable, AllChannelsView::render)

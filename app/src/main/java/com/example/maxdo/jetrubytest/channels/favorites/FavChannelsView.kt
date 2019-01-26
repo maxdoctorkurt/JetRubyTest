@@ -8,6 +8,8 @@ interface FavChannelsView: BaseView<FavChannelsViewState> {
 
     fun getClickOnFavChannelIntent() : Observable<Source>
     fun getDismissFavChannelRemovingDialogIntent(): Observable<Boolean>
+    fun getSubmitRemovingFromFavChannelsDialogIntent(): Observable<Source>
+    fun getNotifyDoneMessageShowedOnceIntent(): Observable<Boolean>
     fun pullToRefreshFavChannelsIntent(): Observable<Boolean>
 
 }
