@@ -23,9 +23,18 @@ class FavChannelsFragment : MviFragment<FavChannelsView, FavChannelsPresenter>()
 
     // give to adapter
     private val favItemClickSubject = PublishSubject.create<Source>()
+
     private var removeFromFavDialogSubmit = PublishSubject.create<Source>()
     private var removeFromFavDialogDismiss = PublishSubject.create<Boolean>()
     private var notifyDoneMessageShowedOnce = PublishSubject.create<Boolean>()
+
+    companion object {
+        val refreshFromOutsideItemsSubject = PublishSubject.create<Boolean>()
+    }
+
+    override fun refreshFromOutsideIntent(): Observable<Boolean> {
+        return refreshFromOutsideItemsSubject
+    }
 
     override fun getSubmitRemovingFromFavChannelsDialogIntent(): Observable<Source> {
         return removeFromFavDialogSubmit

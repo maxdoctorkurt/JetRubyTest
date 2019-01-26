@@ -1,5 +1,6 @@
 package com.example.maxdo.jetrubytest.channels.all
 
+import com.example.maxdo.jetrubytest.channels.favorites.FavChannelsFragment
 import com.example.maxdo.jetrubytest.core.Repository
 import com.example.maxdo.jetrubytest.core.entities.Source
 import com.hannesdorfmann.mosby3.mvi.MviBasePresenter
@@ -61,6 +62,8 @@ class AllChannelsPresenter : MviBasePresenter<AllChannelsView, AllChannelsViewSt
                 return@flatMap Repository.addSourceToFav(it).toObservable()
             }
             .map {
+                // tell a fragment that something has changed
+                FavChannelsFragment.refreshFromOutsideItemsSubject.onNext(true)
                 return@map PartialVS.FavoriteDialogSubmit()
             }
 

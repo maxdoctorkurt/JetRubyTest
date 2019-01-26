@@ -71,6 +71,16 @@ class FavChannelsPresenter : MviBasePresenter<FavChannelsView, FavChannelsViewSt
                 return@map PartialVS.DoneMessageShowedOnce()
             }
 
+        val partialRefreshFromOutside: Observable<PartialVS> = intent(FavChannelsView::refreshFromOutsideIntent)
+            .observeOn(Schedulers.io())
+            .debounce(300, TimeUnit.MILLISECONDS)
+            .flatMap {
+                return@flatMap Repository.getFavSources().toObservable()
+            }
+            .map {
+                return@map PartialVS.RefreshOutside(it)
+            }
+
         val observable: Observable<FavChannelsViewState> =
             partialPullToRefresh
                 .mergeWith(partialFirstShow)
@@ -78,6 +88,7 @@ class FavChannelsPresenter : MviBasePresenter<FavChannelsView, FavChannelsViewSt
                 .mergeWith(partialDialogDismiss)
                 .mergeWith(partialDialogSubmit)
                 .mergeWith(partialDoneShowedOnce)
+                .mergeWith(partialRefreshFromOutside)
                 .scan(initialState, this::stateReducer)
                 .startWith(
                     FavChannelsViewState(listOf(), true, null)
@@ -127,6 +138,11 @@ class FavChannelsPresenter : MviBasePresenter<FavChannelsView, FavChannelsViewSt
                 .build()
         }
 
+        if (partialState is PartialVS.RefreshOutside) {
+            return initialState.builder().withChannels(partialState.updatedList)
+                .build()
+        }
+
         throw IllegalStateException("Unknown Partial!")
     }
 
@@ -139,7 +155,7 @@ class FavChannelsPresenter : MviBasePresenter<FavChannelsView, FavChannelsViewSt
         class FavoriteRemoveDialogSubmit(val updatedList: List<Source>) : PartialVS()
         class ChannelSelection(val channel: Source) : PartialVS()
         class DoneMessageShowedOnce() : PartialVS()
+        class RefreshOutside(val updatedList: List<Source>) : PartialVS()
     }
-
 
 }
