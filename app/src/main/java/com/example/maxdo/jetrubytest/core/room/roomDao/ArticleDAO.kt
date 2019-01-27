@@ -16,4 +16,7 @@ interface ArticleDAO {
 
     @Delete
     fun delete(source: Article)
+
+    @Query("DELETE FROM Article")
+    fun removeAllArticles()
 }

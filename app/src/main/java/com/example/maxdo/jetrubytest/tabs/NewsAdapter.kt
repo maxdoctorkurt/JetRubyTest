@@ -37,7 +37,7 @@ class NewsAdapter(private val context: Context) :
         holder.content.text = article.content
 
         if(article.urlToImage != null && article.urlToImage.isNotEmpty())
-        Picasso.get().load(article.urlToImage).into(holder.image)
+        Picasso.get().load(article.urlToImage).centerCrop().fit().into(holder.image)
     }
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {

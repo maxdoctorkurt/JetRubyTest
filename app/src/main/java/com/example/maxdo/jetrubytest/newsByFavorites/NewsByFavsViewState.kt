@@ -4,7 +4,7 @@ import com.example.maxdo.jetrubytest.core.entities.Article
 
 class NewsByFavsViewState(
     val articles: List<Article> = listOf(),
-    val progress: Boolean = true,
+    val progress: Boolean = false,
     val error: String? = null
 ) {
     fun builder() = Builder(

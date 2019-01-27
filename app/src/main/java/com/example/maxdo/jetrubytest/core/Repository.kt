@@ -13,8 +13,8 @@ object Repository {
     private val api = App.instance?.apiCalls?.api
     private val db = App.instance?.db
 
-    fun everything(sources: String): Single<EverythingResponse> {
-        return api?.everything(sources) ?: Single.just(EverythingResponse(null, null, null))
+    fun everythingBySources(sources: String): Single<EverythingResponse> {
+        return api?.everythingBySources(sources) ?: Single.just(EverythingResponse(null, null, null))
     }
 
     fun topHeadlines(query: String, pageSize: Int): Single<EverythingResponse> {
@@ -40,23 +40,48 @@ object Repository {
     }
 
     fun getArticlesByFavoriteSources(): Single<List<Article>> {
+        
+        val articlesFromInternet: Single<List<Article>> =
+            getFavSources()
+                .toObservable()
+                .flatMap {
+                    Observable.fromIterable(it)
+                }
+                .filter {
+                    it.name != null
+                }
+                .flatMap {
+                    everythingBySources(it.name!!).toObservable()
+                }
+                .filter {
+                    it.articles != null
+                }
+                .toList()
+                .toObservable()
+                .doOnNext {
+                    // clean old cache only when request is success
+                    db?.articleDao?.removeAllArticles()
+                }
+                .flatMap {
+                    Observable.fromIterable(it)
+                }
+                .flatMap { everythingResponse ->
+                    Observable.fromIterable(everythingResponse.articles!!).map {
+                        // caching new articles
+                        println("*** add to cache!!!")
+                        db?.articleDao?.add(it)
+                        it
+                    }
+                }
+                .toList().onErrorResumeNext(Single.just(listOf<Article>()))
 
-        return getFavSources().toObservable().flatMap {
-            return@flatMap Observable.fromIterable(it)
-        }
-            .filter {
-                return@filter it.name != null
-            }
-            .flatMap {
-                return@flatMap everything(it.name!!).toObservable()
-            }
-            .filter {
-                return@filter it.articles != null
-            }
-            .flatMap {
-                return@flatMap Observable.fromIterable(it.articles!!)
-            }
-            .toList()
+        val articlesFromDB: Single<List<Article>> =
+            Single.defer { Single.just(db?.articleDao?.getAllArticles() ?: listOf()) }
+
+        return articlesFromInternet.concatWith(articlesFromDB).filter {
+            it.isNotEmpty()
+        }.first(listOf())
+
     }
 
 }

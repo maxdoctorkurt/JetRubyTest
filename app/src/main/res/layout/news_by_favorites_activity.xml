@@ -1,8 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
-              android:background="@color/green_300"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+            app:title="News App"
+            app:titleTextColor="@color/white"
+            android:background="@color/colorPrimary"
+            android:id="@+id/newsByFavChannelsToolbar" android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+    <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+
+
+        <FrameLayout android:id="@+id/noElementsWrapper" android:layout_width="match_parent" android:layout_height="match_parent">
+            <include layout="@layout/no_elements"/>
+        </FrameLayout>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipeArticlesByFavChannels"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView android:layout_width="match_parent"
+                                                       android:id="@+id/articlesByFavChannels"
+                                                       android:layout_height="wrap_content"/>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    </FrameLayout>
+
+
 
 </LinearLayout>
