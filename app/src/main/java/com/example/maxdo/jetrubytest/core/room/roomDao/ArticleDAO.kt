@@ -5,7 +5,7 @@ import com.example.maxdo.jetrubytest.core.entities.Article
 
 @Dao
 interface ArticleDAO {
-    @Query("SELECT * FROM Source")
+    @Query("SELECT * FROM Article")
     fun getAllArticles(): List<Article>?
 
     @Update
