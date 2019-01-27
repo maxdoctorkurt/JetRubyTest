@@ -1,4 +1,4 @@
-package com.example.maxdo.jetrubytest.channels.favorites
+package com.example.maxdo.jetrubytest.tabs.favoritesChannels
 
 import com.example.maxdo.jetrubytest.core.entities.Source
 import com.example.maxdo.jetrubytest.core.mvi.BaseView

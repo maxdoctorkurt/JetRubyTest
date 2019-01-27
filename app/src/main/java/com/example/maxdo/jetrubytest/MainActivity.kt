@@ -1,17 +1,16 @@
 package com.example.maxdo.jetrubytest
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.SearchView
-import androidx.transition.Transition
 import androidx.transition.TransitionManager
-import com.example.maxdo.jetrubytest.channels.CustomPagerAdapter
+import com.example.maxdo.jetrubytest.newsByFavorites.NewsByFavoritesChannelsActivity
+import com.example.maxdo.jetrubytest.tabs.CustomPagerAdapter
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
-import androidx.core.view.MenuItemCompat.getActionView
-import com.example.maxdo.jetrubytest.channels.searchNews.SearchNewsFragment
-
+import com.example.maxdo.jetrubytest.tabs.searchNews.SearchNewsFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,6 +30,11 @@ class MainActivity : AppCompatActivity() {
         // initial state
         mainToolbar.findViewById<View>(R.id.toNews).visibility = View.GONE
         mainToolbar.findViewById<View>(R.id.search).visibility = View.GONE
+
+        mainToolbar.findViewById<View>(R.id.toNews).setOnClickListener {
+            val intent = Intent(this, NewsByFavoritesChannelsActivity::class.java)
+            startActivity(intent)
+        }
 
         val menu = mainToolbar.menu
 
@@ -63,23 +67,17 @@ class MainActivity : AppCompatActivity() {
 
                     when (it.position) {
                         0 -> {
-
                             TransitionManager.beginDelayedTransition(mainToolbar);
-
                             mainToolbar.findViewById<View>(R.id.toNews).visibility = View.GONE
                             mainToolbar.findViewById<View>(R.id.search).visibility = View.GONE
-
                         }
                         1 -> {
                             TransitionManager.beginDelayedTransition(mainToolbar);
-
                             mainToolbar.findViewById<View>(R.id.toNews).visibility = View.VISIBLE
                             mainToolbar.findViewById<View>(R.id.search).visibility = View.GONE
-
                         }
                         2 -> {
                             TransitionManager.beginDelayedTransition(mainToolbar);
-
                             mainToolbar.findViewById<View>(R.id.toNews).visibility = View.GONE
                             mainToolbar.findViewById<View>(R.id.search).visibility = View.VISIBLE
                         }
@@ -88,8 +86,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-
         })
-
     }
 }

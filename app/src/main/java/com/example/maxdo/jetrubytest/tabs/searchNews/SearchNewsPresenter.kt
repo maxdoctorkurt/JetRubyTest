@@ -1,4 +1,4 @@
-package com.example.maxdo.jetrubytest.channels.searchNews
+package com.example.maxdo.jetrubytest.tabs.searchNews
 
 import com.example.maxdo.jetrubytest.core.Repository
 import com.example.maxdo.jetrubytest.core.entities.Article
@@ -24,12 +24,7 @@ class SearchNewsPresenter : MviBasePresenter<SearchNewsView, SearchNewsViewState
                 return@map PartialVS.Search(listOf())
             }
             .onErrorResumeNext { throwable: Throwable ->
-                Observable.just(
-                    PartialVS.Search(
-                        listOf(),
-                        throwable.message + throwable.localizedMessage
-                    )
-                )
+                onError(throwable)
             }
             .startWith(PartialVS.Loading())
 
@@ -42,6 +37,15 @@ class SearchNewsPresenter : MviBasePresenter<SearchNewsView, SearchNewsViewState
                 .observeOn(AndroidSchedulers.mainThread())
 
         subscribeViewState(observable, SearchNewsView::render)
+    }
+
+    private fun onError(throwable: Throwable): Observable<PartialVS> {
+        return Observable.just(
+            PartialVS.Search(
+                listOf(), throwable.message + throwable.localizedMessage
+
+            )
+        )
     }
 
     private fun stateReducer(initialState: SearchNewsViewState, partialState: PartialVS): SearchNewsViewState {

@@ -1,4 +1,4 @@
-package com.example.maxdo.jetrubytest.channels.favorites
+package com.example.maxdo.jetrubytest.tabs.favoritesChannels
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.example.maxdo.jetrubytest.R
-import com.example.maxdo.jetrubytest.channels.ChannelsAdapter
+import com.example.maxdo.jetrubytest.tabs.ChannelsAdapter
 import com.example.maxdo.jetrubytest.core.entities.Source
 import com.hannesdorfmann.mosby3.mvi.MviFragment
 import io.reactivex.Observable

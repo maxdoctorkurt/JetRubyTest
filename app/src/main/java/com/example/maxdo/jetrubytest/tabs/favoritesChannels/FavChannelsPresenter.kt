@@ -1,4 +1,4 @@
-package com.example.maxdo.jetrubytest.channels.favorites
+package com.example.maxdo.jetrubytest.tabs.favoritesChannels
 
 import com.example.maxdo.jetrubytest.core.Repository
 import com.example.maxdo.jetrubytest.core.entities.Source
@@ -30,12 +30,7 @@ class FavChannelsPresenter : MviBasePresenter<FavChannelsView, FavChannelsViewSt
                 return@flatMap Observable.just(PartialVS.FirstShow(it, false, null) as PartialVS)
             }
             .onErrorResumeNext { throwable: Throwable ->
-                Observable.just(
-                    PartialVS.FirstShow(
-                        listOf(), false,
-                        throwable.message + throwable.localizedMessage
-                    )
-                )
+                onError(throwable)
             }
 
         val partialItemClick: Observable<PartialVS> = intent(FavChannelsView::getClickOnFavChannelIntent)
@@ -96,6 +91,15 @@ class FavChannelsPresenter : MviBasePresenter<FavChannelsView, FavChannelsViewSt
                 .observeOn(AndroidSchedulers.mainThread())
 
         subscribeViewState(observable, FavChannelsView::render)
+    }
+
+    private fun onError(throwable: Throwable): Observable<PartialVS> {
+        return Observable.just(
+            PartialVS.FirstShow(
+                listOf(), false,
+                throwable.message + throwable.localizedMessage
+            )
+        )
     }
 
     private fun stateReducer(initialState: FavChannelsViewState, partialState: PartialVS): FavChannelsViewState {

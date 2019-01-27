@@ -1,11 +1,11 @@
-package com.example.maxdo.jetrubytest.channels
+package com.example.maxdo.jetrubytest.tabs
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.example.maxdo.jetrubytest.channels.all.AllChannelsFragment
-import com.example.maxdo.jetrubytest.channels.favorites.FavChannelsFragment
-import com.example.maxdo.jetrubytest.channels.searchNews.SearchNewsFragment
+import com.example.maxdo.jetrubytest.tabs.allChannels.AllChannelsFragment
+import com.example.maxdo.jetrubytest.tabs.favoritesChannels.FavChannelsFragment
+import com.example.maxdo.jetrubytest.tabs.searchNews.SearchNewsFragment
 
 class CustomPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 

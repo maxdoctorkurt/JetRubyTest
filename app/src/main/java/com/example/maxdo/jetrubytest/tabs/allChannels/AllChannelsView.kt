@@ -1,4 +1,4 @@
-package com.example.maxdo.jetrubytest.channels.all
+package com.example.maxdo.jetrubytest.tabs.allChannels
 
 import com.example.maxdo.jetrubytest.core.entities.Source
 import com.example.maxdo.jetrubytest.core.mvi.BaseView

@@ -1,4 +1,4 @@
-package com.example.maxdo.jetrubytest.channels
+package com.example.maxdo.jetrubytest.tabs
 
 import android.content.Context
 import android.view.LayoutInflater

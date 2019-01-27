@@ -1,22 +1,21 @@
-package com.example.maxdo.jetrubytest.channels.all
+package com.example.maxdo.jetrubytest.tabs.favoritesChannels
 
 import com.example.maxdo.jetrubytest.core.entities.Source
 
-class AllChannelsViewState(
+class FavChannelsViewState(
     val channels: List<Source> = listOf(),
     val progress: Boolean = true,
     val sourceRelatedToDialog: Source? = null,
-    val successAddingToFavoritesMessage: String? = null,
-    val successAddingToFavoritesMessageShowedOnce: Boolean = false,
+    val successRemovingFromFavoritesMessage: String? = null,
+    val successRemovingFromFavoritesMessageShowedOnce: Boolean = false,
     val error: String? = null
 ) {
-
     fun builder() = Builder(
         channels,
         progress,
         sourceRelatedToDialog,
-        successAddingToFavoritesMessage,
-        successAddingToFavoritesMessageShowedOnce,
+        successRemovingFromFavoritesMessage,
+        successRemovingFromFavoritesMessageShowedOnce,
         error
     )
 
@@ -24,26 +23,25 @@ class AllChannelsViewState(
         private var channels: List<Source>,
         private var progress: Boolean,
         private var sourceRelatedToDialog: Source?,
-        private var successAddingToFavoritesMessage: String?,
-        private var successAddingToFavoritesMessageShowedOnce: Boolean,
+        private var successRemovingFromFavoritesMessage: String?,
+        private var successRemovingFromFavoritesMessageShowedOnce: Boolean,
         private var error: String?
     ) {
         fun withChannels(channels: List<Source>) = apply { this.channels = channels }
         fun withProgress(progress: Boolean) = apply { this.progress = progress }
-        fun withAddFavouriteDialog(sourceRelatedToDialog: Source?) =
+        fun withFavoriteRemoveDialog(sourceRelatedToDialog: Source?) =
             apply { this.sourceRelatedToDialog = sourceRelatedToDialog }
+
         fun withSuccessAddingToFavoritesMessage(successAddingToFavoritesMessage: String?) =
-            apply { this.successAddingToFavoritesMessage = successAddingToFavoritesMessage }
+            apply { this.successRemovingFromFavoritesMessage = successAddingToFavoritesMessage }
 
         fun withError(error: String?) = apply { this.error = error }
-        fun build() = AllChannelsViewState(
-            channels,
-            progress,
-            sourceRelatedToDialog,
-            successAddingToFavoritesMessage,
-            successAddingToFavoritesMessageShowedOnce,
+
+        fun build() = FavChannelsViewState(
+            channels, progress, sourceRelatedToDialog,
+            successRemovingFromFavoritesMessage,
+            successRemovingFromFavoritesMessageShowedOnce,
             error
         )
     }
-
 }

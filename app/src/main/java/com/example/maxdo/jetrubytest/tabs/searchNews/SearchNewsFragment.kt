@@ -1,4 +1,4 @@
-package com.example.maxdo.jetrubytest.channels.searchNews
+package com.example.maxdo.jetrubytest.tabs.searchNews
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,8 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.maxdo.jetrubytest.R
-import com.example.maxdo.jetrubytest.channels.ChannelsAdapter
-import com.example.maxdo.jetrubytest.channels.NewsAdapter
+import com.example.maxdo.jetrubytest.tabs.NewsAdapter
 import com.hannesdorfmann.mosby3.mvi.MviFragment
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject

@@ -1,4 +1,4 @@
-package com.example.maxdo.jetrubytest.channels.searchNews
+package com.example.maxdo.jetrubytest.tabs.searchNews
 
 import com.example.maxdo.jetrubytest.core.mvi.BaseView
 import io.reactivex.Observable
