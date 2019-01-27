@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+             android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView android:layout_width="match_parent"
+                                       app:cardUseCompatPadding="true"
+                                       android:layout_height="wrap_content">
+
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                     android:layout_width="match_parent"
+                     android:clickable="true"
+                     android:padding="8dp"
+                     android:focusable="true"
+                     android:layout_height="match_parent">
+
+            <ImageView
+                    android:src="@drawable/no_image_icon_6"
+                    android:adjustViewBounds="true"
+                    android:id="@+id/newsImage"
+                    android:layout_width="match_parent" android:layout_height="256dp"
+                    android:contentDescription="@null"/>
+
+            <LinearLayout
+                    android:background="@color/greyTransparent"
+                    android:layout_gravity="bottom" android:orientation="vertical" android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <TextView
+                        android:padding="8dp"
+                        tools:text="Title"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" android:id="@+id/newsTitle"
+                        android:maxLines="1" android:gravity="start"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+                <TextView
+                        tools:text="Description"
+                        android:padding="8dp"
+                        android:id="@+id/newsDescription" android:maxLines="2" android:gravity="start"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</FrameLayout>

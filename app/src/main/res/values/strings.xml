@@ -11,4 +11,6 @@
     <string name="cancel">Cancel</string>
     <string name="removing_from_fav_dialog_title">Favorites</string>
     <string name="removing_from_fav_dialog_message">Remove this channel from favorites?</string>
+    <string name="news">News</string>
+    <string name="searchnews">SearchNews</string>
 </resources>
