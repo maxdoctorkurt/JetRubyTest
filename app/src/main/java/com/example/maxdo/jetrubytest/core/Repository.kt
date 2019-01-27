@@ -40,7 +40,7 @@ object Repository {
     }
 
     fun getArticlesByFavoriteSources(): Single<List<Article>> {
-        
+
         val articlesFromInternet: Single<List<Article>> =
             getFavSources()
                 .toObservable()

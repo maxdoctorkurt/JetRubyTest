@@ -2,6 +2,7 @@ package com.example.maxdo.jetrubytest.tabs.searchNews
 
 import com.example.maxdo.jetrubytest.core.Repository
 import com.example.maxdo.jetrubytest.core.entities.Article
+import com.example.maxdo.jetrubytest.core.responses.EverythingResponse
 import com.hannesdorfmann.mosby3.mvi.MviBasePresenter
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -17,16 +18,8 @@ class SearchNewsPresenter : MviBasePresenter<SearchNewsView, SearchNewsViewState
             .observeOn(Schedulers.io())
             .debounce(1000, TimeUnit.MILLISECONDS)
             .flatMap {
-                return@flatMap Repository.topHeadlines(it, 30).toObservable().cache()
+                topHeadlines(it)
             }
-            .map {
-                if (it.articles != null) return@map PartialVS.Search(it.articles) as PartialVS
-                return@map PartialVS.Search(listOf())
-            }
-            .onErrorResumeNext { throwable: Throwable ->
-                onError(throwable)
-            }
-            .startWith(PartialVS.Loading())
 
         val observable: Observable<SearchNewsViewState> =
             searchPartial
@@ -39,13 +32,16 @@ class SearchNewsPresenter : MviBasePresenter<SearchNewsView, SearchNewsViewState
         subscribeViewState(observable, SearchNewsView::render)
     }
 
-    private fun onError(throwable: Throwable): Observable<PartialVS> {
-        return Observable.just(
-            PartialVS.Search(
-                listOf(), throwable.message + throwable.localizedMessage
+    private fun topHeadlines(searchString: String): Observable<PartialVS> {
 
-            )
-        )
+        return Repository.topHeadlines(searchString, 30).toObservable().cache()
+
+            .flatMap {
+                val o1: Observable<PartialVS> = Observable.just(PartialVS.Loading())
+                val o2: Observable<PartialVS> = Observable.just(PartialVS.Search(it.articles!!, null))
+                o1.concatWith(o2)
+            }
+            .onErrorResumeNext { t: Throwable -> Observable.just(PartialVS.Search(listOf(), t.message)) }
     }
 
     private fun stateReducer(initialState: SearchNewsViewState, partialState: PartialVS): SearchNewsViewState {

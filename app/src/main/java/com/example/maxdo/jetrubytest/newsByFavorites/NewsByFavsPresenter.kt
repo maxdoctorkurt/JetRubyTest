@@ -18,28 +18,22 @@ class NewsByFavsPresenter : MviBasePresenter<NewsByFavsView, NewsByFavsViewState
             .observeOn(Schedulers.io())
             .debounce(300, TimeUnit.MILLISECONDS)
             .flatMap {
-                getArticlesAccordingToFavoriteChannels(initialState)
+                getArticlesAccordingToFavoriteChannels()
             }
 
         val observable: Observable<NewsByFavsViewState> =
             partialListLoading
-
                 .scan(initialState, this::stateReducer)
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 
         subscribeViewState(observable, NewsByFavsView::render)
     }
 
-    private fun getArticlesAccordingToFavoriteChannels(initialState: NewsByFavsViewState): Observable<PartialVS> {
+    private fun getArticlesAccordingToFavoriteChannels(): Observable<PartialVS> {
         return Repository.getArticlesByFavoriteSources().toObservable().cache()
             .flatMap {
-
-                if (initialState.articles.isEmpty())
-                    Observable.just(PartialVS.ShowList(it, false, null) as PartialVS)
-
                 val o1: Observable<PartialVS> = Observable.just(PartialVS.Loading(true))
                 val o2: Observable<PartialVS> = Observable.just(PartialVS.ShowList(it, false, null))
-
                 o1.concatWith(o2)
             }
             .onErrorResumeNext { t: Throwable -> Observable.just(PartialVS.ShowList(listOf(), false, t.message)) }

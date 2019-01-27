@@ -16,34 +16,11 @@ class AllChannelsPresenter : MviBasePresenter<AllChannelsView, AllChannelsViewSt
         val initialState = AllChannelsViewState()
 
         val partialPull: Observable<PartialVS> = intent(AllChannelsView::getPullToRefreshIntent)
+            .mergeWith(Observable.just(true))
             .observeOn(Schedulers.io())
             .debounce(300, TimeUnit.MILLISECONDS)
             .flatMap {
-                return@flatMap Repository.sources().toObservable().cache()
-            }
-            .flatMap {
-                if (it.sources != null) {
-                    val result = PartialVS.PullToRefresh(it.sources, false, null) as PartialVS
-                    return@flatMap Observable.just(result)
-                }
-                return@flatMap Observable.just(PartialVS.PullToRefresh(listOf(), false, "Error!"))
-            }
-            .onErrorResumeNext { throwable: Throwable ->
-                onError(throwable)
-            }
-            .onExceptionResumeNext(
-                onException()
-            )
-            .startWith(PartialVS.Loading(true))
-
-        val partialFirstShow: Observable<PartialVS> = Repository.sources().toObservable().cache()
-            .flatMap {
-                if (it.sources != null)
-                    return@flatMap Observable.just(PartialVS.FirstShow(it.sources, false, null) as PartialVS)
-                return@flatMap Observable.just(PartialVS.FirstShow(listOf(), false, "No sources!") as PartialVS)
-            }
-            .onErrorResumeNext { throwable: Throwable ->
-                onError(throwable)
+                getSources()
             }
 
         val partialItemClick: Observable<PartialVS> = intent(AllChannelsView::getClickOnChannelIntent)
@@ -61,59 +38,44 @@ class AllChannelsPresenter : MviBasePresenter<AllChannelsView, AllChannelsViewSt
                 .observeOn(Schedulers.io())
                 .debounce(300, TimeUnit.MILLISECONDS)
                 .flatMap {
-                    return@flatMap Repository.addSourceToFav(it).toObservable()
+                    Repository.addSourceToFav(it).toObservable()
                 }
                 .map {
                     // tell a fragment that something has changed
                     FavChannelsFragment.refreshFromOutsideItemsSubject.onNext(true)
-                    return@map PartialVS.FavoriteDialogSubmit()
+                    PartialVS.FavoriteDialogSubmit()
                 }
 
         val partialDoneShowedOnce: Observable<PartialVS> = intent(AllChannelsView::getNotifyDoneMessageShowedOnceIntent)
             .observeOn(Schedulers.io())
             .debounce(300, TimeUnit.MILLISECONDS)
             .map {
-                return@map PartialVS.DoneMessageShowedOnce()
+                PartialVS.DoneMessageShowedOnce()
             }
 
 
         val observable: Observable<AllChannelsViewState> =
             partialPull
-                .mergeWith(partialFirstShow)
                 .mergeWith(partialItemClick)
                 .mergeWith(partialDialogDismiss)
                 .mergeWith(partialDialogSubmit)
                 .mergeWith(partialDoneShowedOnce)
                 .scan(initialState, this::stateReducer)
-                .startWith(
-                    AllChannelsViewState(
-                        listOf(),
-                        true,
-                        null,
-                        null
-                    )
-                ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 
         subscribeViewState(observable, AllChannelsView::render)
 
     }
 
-    private fun onError(throwable: Throwable): Observable<PartialVS> {
-        return Observable.just(
-            PartialVS.FirstShow(
-                listOf(), false,
-                throwable.message + throwable.localizedMessage
-            )
-        )
-    }
 
-    private fun onException(): Observable<PartialVS> {
-        return Observable.just(
-            PartialVS.FirstShow(
-                listOf(), false,
-                "NetworkError!"
-            )
-        )
+    private fun getSources(): Observable<PartialVS> {
+        return Repository.sources().toObservable().cache()
+            .flatMap {
+                val o1: Observable<PartialVS> = Observable.just(PartialVS.Loading(true))
+                val o2: Observable<PartialVS> = Observable.just(PartialVS.ListShow(it.sources!!, false, null))
+                o1.concatWith(o2)
+            }
+            .onErrorResumeNext { t: Throwable -> Observable.just(PartialVS.ListShow(listOf(), false, t.message)) }
     }
 
     private fun stateReducer(initialState: AllChannelsViewState, partialState: PartialVS): AllChannelsViewState {
@@ -123,8 +85,8 @@ class AllChannelsPresenter : MviBasePresenter<AllChannelsView, AllChannelsViewSt
                 .build()
         }
 
-        if (partialState is PartialVS.FirstShow) {
-            return initialState.builder().withChannels(partialState.channels).withError(null).withProgress(false)
+        if (partialState is PartialVS.ListShow) {
+            return initialState.builder().withChannels(partialState.channels).withError(partialState.error).withProgress(false)
                 .build()
         }
 
@@ -161,7 +123,7 @@ class AllChannelsPresenter : MviBasePresenter<AllChannelsView, AllChannelsViewSt
     sealed class PartialVS {
         class Loading(val progress: Boolean) : PartialVS()
         class PullToRefresh(val channels: List<Source>, val progress: Boolean, val error: String?) : PartialVS()
-        class FirstShow(val channels: List<Source>, val progress: Boolean, val error: String?) : PartialVS()
+        class ListShow(val channels: List<Source>, val progress: Boolean, val error: String?) : PartialVS()
         class EmptySourcesList() : PartialVS()
         class FavoriteDialogDismiss() : PartialVS()
         class FavoriteDialogSubmit() : PartialVS()
